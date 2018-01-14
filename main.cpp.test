@@ -1,0 +1,92 @@
+#include "mbed.h"
+
+#include "easy-connect.h"
+
+DigitalOut led1(LED1, false);
+
+static NetworkInterface* s_network;
+
+bool run_http_demo()
+{
+    TCPSocket socket;
+    nsapi_error_t response;
+
+    printf("Sending HTTP request to httpbin.org/get...\n");
+
+    // Open a socket on the network interface, and create a TCP connection to www.arm.com
+    socket.open(s_network);
+    response = socket.connect("httpbin.org", 80);
+    if(0 != response) {
+        printf("Error connecting: %d\n", response);
+        socket.close();
+        return false;
+    }
+
+    // Send a simple http request
+    char sbuffer[] = "GET /get HTTP/1.1\r\nHost: httpbin.org\r\n\r\n";
+    nsapi_size_t size = strlen(sbuffer);
+    response = 0;
+    while(size)
+    {
+        response = socket.send(sbuffer+response, size);
+        if (response < 0) {
+            printf("Error sending data: %d\n", response);
+            socket.close();
+            return false;
+        } else {
+            size -= response;
+            // Check if entire message was sent or not
+            printf("sent:\n%d [%.*s]\n\n", response, strstr(sbuffer, "\r\n")-sbuffer, sbuffer);
+        }
+    }
+
+    // Recieve a simple http response and print out the response line
+    char rbuffer[1024];
+    response = socket.recv(rbuffer, sizeof rbuffer);
+    if (response < 0) {
+        printf("Error receiving data: %d\n", response);
+        socket.close();
+        return false;
+    } else {
+        //printf("recv %d [%.*s]\n", response, strstr(rbuffer, "\r\n")-rbuffer, rbuffer);
+        rbuffer[response]='\0';
+        printf("received:\n%s\n\n",rbuffer);
+
+        // Close the socket to return its memory and bring down the network interface
+        socket.close();
+
+        return true;
+    }
+}
+
+int main(int, char**)
+{
+    s_network = easy_connect(true); /* has 1 argument, enable_logging (pass in true to log to serial port) */
+    
+    if (!s_network)
+    {
+        printf("Connecting to the network failed... See serial output.\n");
+        return 1;
+    }
+
+    printf("Connecting to the network succeeded!\n");
+
+    while(true)
+    {
+        if(run_http_demo())
+        {
+            led1.write(true);
+            wait_ms(100);
+            led1.write(false);
+            wait_ms(900);
+        }
+        else
+        {
+            wait_ms(1000);
+        }
+
+        
+    }
+
+    return 0;
+}

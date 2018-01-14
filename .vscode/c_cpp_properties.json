@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "mbedos",
+            "includePath": [
+                "${workspaceRoot}",
+                "${workspaceRoot}/mbed-os"
+            ],
+            "defines": [],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "${workspaceRoot}"
+                ],
+                "limitSymbolsToIncludedHeaders": false,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 3
+}

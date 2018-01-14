@@ -1,0 +1,3 @@
+BUILD/
+*.jdebug
+mbed_settings.pyc

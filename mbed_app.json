@@ -1,0 +1,26 @@
+{
+  "config": {
+    "network-interface":{
+      "help": "options are ETHERNET, WIFI_ESP8266, WIFI_IDW0XX1, WIFI_ODIN, WIFI_RTW, MESH_LOWPAN_ND, MESH_THREAD, CELLULAR_ONBOARD",
+      "value": "WIFI_ESP8266"
+    },
+    "wifi-ssid": {
+      "value": "\"DEFAULT_SSID\""
+    },
+    "wifi-password": {
+        "value": "\"DEFAULT_PASSWORD\""
+    },
+    "no-esp8266-debug": {
+      "value": true
+    }
+  },
+  "target_overrides": {
+    "*": {
+        "easy-connect.wifi-esp8266-tx": "PC_10",
+        "easy-connect.wifi-esp8266-rx": "PC_11",
+        "easy-connect.wifi-esp8266-debug": false,
+        "platform.stdio-baud-rate": 115200,
+        "platform.stdio-convert-newlines": true
+     }
+  }
+}
